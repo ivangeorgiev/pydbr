@@ -35,7 +35,7 @@ $ pydbr --help
  or using python module:
 
 ```bash
-$ python -m pydbr.databricks.cli --help
+$ python -m pydbr.cli --help
 ```
 
 To connect to the Databricks cluster, you can supply arguments at the command line:

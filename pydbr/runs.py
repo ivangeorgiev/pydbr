@@ -1,3 +1,4 @@
+import time
 import datetime
 from typing import List
 from .common import Api
@@ -5,6 +6,9 @@ from .databricks_data_classes import *
 
 
 class Runs(Api):
+    WAIT_TIMEOUT_SECONDS = 300.0
+    WAIT_POLL_INTERVAL_SECONDS = 3.0
+
     def __init__(self, link):
         super().__init__(link, path='jobs/runs')
 
@@ -14,7 +18,7 @@ class Runs(Api):
             params=dict(run_id=run_id),)
         return DatabricksRun(**response)
 
-    def get_output(self, run_id) -> DatabricksRun:
+    def get_output(self, run_id) -> DatabricksRunOutput:
         response = self.link.get(
             self.path('get-output'),
             params=dict(run_id=run_id),)
@@ -32,7 +36,7 @@ class Runs(Api):
         assert cluster_id, f"cluster_id not specified. Set cluster_id with connect or pass as parameter"
 
         params = params or {}
-        run_name = run_name or "pyspark-me-" + str(int(datetime.datetime.now().timestamp()))
+        run_name = run_name or "pydbr-" + str(int(datetime.datetime.now().timestamp()))
 
         r = dict(
             run_name=run_name,
@@ -49,6 +53,23 @@ class Runs(Api):
             json=r
         )
         return response['run_id']
+
+    def wait(self,
+             run_id, 
+             timeout_seconds:float=None, 
+             poll_interval_seconds:float=None):
+        timeout_seconds = timeout_seconds or self.WAIT_TIMEOUT_SECONDS
+        poll_interval_seconds = poll_interval_seconds or self.WAIT_POLL_INTERVAL_SECONDS
+        expires_at = time.time() + timeout_seconds
+        exit_states = ['TERMINATED', 'SKIPPED', 'INTERNAL_ERROR']
+        while True:
+            run_meta = self.get(run_id)
+            run_state = run_meta.state['life_cycle_state']
+            if run_state in exit_states:
+                break
+            if time.time() > expires_at: # pragma: no cover
+                raise Exception('Timeout of {} seconds reached for run {}.'.format(timeout_seconds, run_id))
+            time.sleep(poll_interval_seconds)
 
     def ls(self, job_id=None, offset=None, limit=None,
             completed_only=False, active_only=False) -> DatabricksRunList:

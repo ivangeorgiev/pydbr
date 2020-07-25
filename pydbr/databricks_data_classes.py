@@ -2,6 +2,7 @@ from dataclasses import dataclass, field, asdict
 from typing import List
 from .common import bite_size_str
 
+@dataclass
 class DataClass:
     def asdict(self) -> dict:
         return asdict(self)

@@ -15,6 +15,7 @@ class Workspace(Api):
         super().__init__(link, path='workspace')
 
     def ls(self, path=None) -> List[DatabricksObjectInfo]:
+        """List Databricks workspace items"""
         response = self.link.get(
             self.path('list'),
             params=dict(path=(path or '/')))
@@ -22,6 +23,7 @@ class Workspace(Api):
         return objects
 
     def exists(self, path):
+        """Check if Databricks workspace item exists."""
         try:
             self.ls(path)
             result = True
@@ -31,13 +33,15 @@ class Workspace(Api):
         return result        
 
     def is_directory(self, path):
+        """Check if existing Databirkcs workspace item is a directory."""
         if path == '/':
             return True
         item = self.ls(path)[0]
         return item.path != path
 
     def export(self, path:str, format:ExportFormat=ExportFormat.SOURCE) -> bytes:
-        format = ExportFormat[format] if isinstance(format, str) else format
+        """Export databricks item to bytes."""
+        format = ExportFormat[format.upper()] if isinstance(format, str) else format
         assert isinstance(format, ExportFormat), 'format must be ExportFormat or str instance'
         link_response = self.link.get(
             self.path('export'),

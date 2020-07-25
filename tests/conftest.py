@@ -19,6 +19,8 @@ class PydbrTestFixture:
     dbfs_fix = '/pydbr-test/fixture'
     dbfs_fix_files = '/pydbr-test/fixture/files'
 
+    ws_fix = '/pydbr-test-fixtures/fixture'
+
     def __post_init__(self):
         self.databricks_url = os.environ[self.ENV_VAR_DATABRICKS_URL]
         self.dastabricks_token = os.environ[self.ENV_VAR_DATABRICKS_TOKEN]

@@ -67,3 +67,15 @@ def test_bite_size_str_with_custom_format():
     assert '200 pix' == actual
     actual = pydbr.common.bite_size_str(3500, fmt)
     assert '3.5 Kpix' == actual
+
+
+
+def test_DataClass():
+    c = pydbr.databricks_data_classes.DataClass.from_dict({})
+
+    d = c.asdict()
+    assert isinstance(d, dict)
+
+    for attr in c: # Can be iterated
+        pass
+

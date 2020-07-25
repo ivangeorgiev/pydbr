@@ -6,9 +6,8 @@ class Jobs(Api):
         super().__init__(link, path='jobs')
 
     def list(self, path=None):
-        list_result = self.link.get(
-            self.path('list'),
-            params=dict(path=(path or '/')))
+        """Get a list of Databricks jobs."""
+        list_result = self.link.get(self.path('list'))
         return list_result.get('jobs', [])
 
     @property

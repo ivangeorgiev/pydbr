@@ -61,10 +61,12 @@ class DatabricksRun(DataClass):
     setup_duration: int = None
     execution_duration: int = None
     cleanup_duration: int = None
+    end_time: int = None
     trigger: dict = None
     run_name: str = None
     run_page_url: str = None
     run_type: str = None
+    attempt_number: int = None
 
 @dataclass
 class DatabricksRunList(DataClass):
